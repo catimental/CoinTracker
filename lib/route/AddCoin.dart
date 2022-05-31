@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:coin_tracker/CoinsProvider.dart';
 import 'package:coin_tracker/domain/Coin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class AddCoinRoute extends StatefulWidget {
   @override
@@ -39,21 +41,22 @@ class _AddCoinState extends State<AddCoinRoute> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        appBar: AppBar(title: Text("코인 추가")),
+        appBar: AppBar(title: const Text("코인 추가")),
         body: FutureBuilder<List<Coin>>(
             future: coins,
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data != null) {
                 return ListView.builder(itemBuilder: (context, index) {
                   return GestureDetector(
-                    child: Card(
-                      child: Text(snapshot.data![index].name),
-                    ),
-                    onTap: () => print(index),
-                  );
+                      child: Card(
+                        child: Text(snapshot.data![index].name),
+                      ),
+                      onTap: () => context
+                          .read<AppendedCoinIds>()
+                          .addCoin(snapshot.data![index].id));
                 });
               }
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             }));
