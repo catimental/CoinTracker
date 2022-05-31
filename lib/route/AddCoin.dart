@@ -41,24 +41,33 @@ class _AddCoinState extends State<AddCoinRoute> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        appBar: AppBar(title: const Text("코인 추가")),
+        appBar: AppBar(
+          title: const Text("코인 추가"),
+          leading: IconButton(
+              onPressed: () {
+                context.read<AppendedCoinIds>().updateStart();
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.arrow_back)),
+        ),
         body: FutureBuilder<List<Coin>>(
-            future: coins,
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data != null) {
-                return ListView.builder(itemBuilder: (context, index) {
-                  return GestureDetector(
-                      child: Card(
-                        child: Text(snapshot.data![index].name),
-                      ),
-                      onTap: () => context
-                          .read<AppendedCoinIds>()
-                          .addCoin(snapshot.data![index].id));
-                });
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }));
+          future: coins,
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return ListView.builder(itemBuilder: (context, index) {
+                return GestureDetector(
+                    child: Card(
+                      child: Text(snapshot.data![index].name),
+                    ),
+                    onTap: () => context
+                        .read<AppendedCoinIds>()
+                        .addCoin(snapshot.data![index].id));
+              });
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ));
   }
 }

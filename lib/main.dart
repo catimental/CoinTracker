@@ -1,6 +1,8 @@
 import 'package:coin_tracker/CoinsProvider.dart';
 import 'package:coin_tracker/route/AddCoin.dart';
+import 'package:coin_tracker/route/Detail.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -38,15 +40,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -56,13 +49,53 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    var _provider = Provider.of<AppendedCoinIds>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(),
+      body: ListView.builder(
+          itemCount: _provider.coins.length,
+          itemBuilder: (BuildContext context, int index) {
+            var key = _provider.coins.keys.elementAt(index);
+            var coin = _provider.coins[key];
+
+            List<TextSpan> titleSpans = [];
+            titleSpans.add(TextSpan(text: coin!.name));
+            if (coin.marketData.percent_change_24h != null) {
+              titleSpans.add(TextSpan(text: " ( "));
+              titleSpans.add(TextSpan(
+                  text:
+                      "${coin.marketData.percent_change_24h! > 0 ? "+" : ""}${coin.marketData.percent_change_24h}%",
+                  style: TextStyle(
+                      color: coin.marketData.percent_change_24h! > 0
+                          ? Colors.red
+                          : Colors.blue)));
+              titleSpans.add(TextSpan(text: " )"));
+            }
+
+            return Container(
+                child: ListTile(
+              title: RichText(
+                  text: TextSpan(
+                      children: titleSpans,
+                      style: DefaultTextStyle.of(context).style)),
+              subtitle: Text(
+                  "${coin.marketData.price != null ? NumberFormat('###,###,###,###').format((coin.marketData.price)?.round()).replaceAll(' ', '') + "원" : "로드중"}"),
+              leading: Image.network(
+                  "https://cryptocurrencyliveprices.com/img/${coin!.id}.png"),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailRoute(coin.id))),
+              onLongPress: () {
+                _provider.removeCoin(coin.id);
+              },
+            ));
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          context.read<AppendedCoinIds>().updateEnd();
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddCoinRoute()),
@@ -72,5 +105,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  @override
+  void initState() {
+    //localStorage에 저장된 정보 불러오기
+    //context.read()<AppendedCoinIds()
   }
 }
