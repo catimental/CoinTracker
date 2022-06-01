@@ -1,6 +1,7 @@
 import 'package:coin_tracker/CoinsProvider.dart';
 import 'package:coin_tracker/route/AddCoin.dart';
 import 'package:coin_tracker/route/Detail.dart';
+import 'package:coin_tracker/util/StringFormatUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -81,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: titleSpans,
                       style: DefaultTextStyle.of(context).style)),
               subtitle: Text(
-                  "${coin.marketData.price != null ? NumberFormat('###,###,###,###').format((coin.marketData.price)?.round()).replaceAll(' ', '') + "원" : "로드중"}"),
+                  "${coin.marketData.price != null ? StringFormatUtils.formatKRW(coin.marketData.price!) : "로드중"}"),
               leading: Image.network(
                   "https://cryptocurrencyliveprices.com/img/${coin!.id}.png"),
               onTap: () => Navigator.push(

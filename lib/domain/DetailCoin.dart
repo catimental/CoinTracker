@@ -46,7 +46,7 @@ class DetailCoin {
       return;
     }
     if (kDebugMode) {
-      print("$id update");
+      // print("$id update");
     }
     _marketData!.update();
   }

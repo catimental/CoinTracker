@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class MarketData {
   final DetailCoin _detailCoin;
   double? price;
-  double? percent_change_24h;
+  num? percent_change_24h;
   String? lastUpdatedTime;
 
   MarketData(this._detailCoin);
