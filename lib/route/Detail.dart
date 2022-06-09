@@ -29,8 +29,9 @@ class _DetailState extends State<DetailRoute> {
     final int endMilliSeconds =
         (DateTime.now().millisecondsSinceEpoch / 1000).floor();
     final int startMilliSeconds =
-        endMilliSeconds - 60 * 60 * 24 * 7 * 2; // 14일 까지의 history를 가져옴
-
+        endMilliSeconds - 60 * 60 * 24 * 6; // 6일 이상의 데이터를 발급받으려면 Key가 필요함 :(
+    print(
+        'https://api.coinpaprika.com/v1/coins/${widget.coinId}/ohlcv/historical?start=$startMilliSeconds&end=$endMilliSeconds&quotes=KRW');
     return http.get(
         Uri.parse(
             'https://api.coinpaprika.com/v1/coins/${widget.coinId}/ohlcv/historical?start=$startMilliSeconds&end=$endMilliSeconds&quotes=KRW'),
